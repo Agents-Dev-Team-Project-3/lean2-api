@@ -11,6 +11,7 @@ const removeBlanks = require('../../lib/remove_blank_fields')
 const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
+// GET All orders
 router.get('/orders', requireToken, (req, res, next) => {
   Order.find({owner: req.user._id})
     .then(orders => {
@@ -20,17 +21,19 @@ router.get('/orders', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// GET single order
 router.get('/orders/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Order.findById(req.params.id)
     .then(handle404)
-    .then((order) => {
+    .then((order) => (
       requireOwnership(req, order)
-    })
+    ))
     .then((order) => res.status(200).json({ order: order.toObject() }))
     .catch(next)
 })
 
+// CREATE
 router.post('/orders', requireToken, (req, res, next) => {
   req.body.order.owner = req.user.id
   Order.create(req.body.order)
@@ -40,8 +43,7 @@ router.post('/orders', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-// UPDATE
-// PATCH /examples/5a7db6c74d55bc51bdf39793
+// UPDATE order
 router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair

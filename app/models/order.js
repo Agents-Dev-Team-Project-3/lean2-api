@@ -2,16 +2,18 @@ const mongoose = require('mongoose')
 
 const orderSchema = new mongoose.Schema(
   {
-    contents: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product'
-    }],
+    contents: [
+      // {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: 'Product',
+      // },
+    ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
-    coupon: String
+    coupon: String,
   },
   {
     timestamps: true,
