@@ -24,11 +24,6 @@ const productSchema = new mongoose.Schema(
     stock: Number,
     color: String,
     sizes: { }
-    // owner: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'User',
-    //   required: true
-    // }
   },
   {
     timestamps: true,
