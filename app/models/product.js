@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema(
     // for non-sized or color products
     stock: Number,
     color: String,
-    sizes: { }
+    size: String
   },
   {
     timestamps: true,
