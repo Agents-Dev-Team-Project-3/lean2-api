@@ -11,13 +11,17 @@ const orderSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: true
     },
     coupon: String,
+    completed: {
+      type: Boolean,
+      required: true
+    }
   },
   {
     timestamps: true,
-    minimize: false,
+    minimize: false
   }
 )
 
