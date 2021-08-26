@@ -32,7 +32,7 @@ router.get('/orders/:id', requireToken, (req, res, next) => {
 })
 
 // GET users openOrder on sign in OR create one
-router.post('/orders/open', requireToken, (req, res, next) => {
+router.get('/orders/open', requireToken, (req, res, next) => {
   Order.find({ owner: req.user._id }) // get all orders i own
     .then((orders) => {
       return orders.map((order) => order.toObject()) // make an array of those orders
@@ -51,14 +51,15 @@ router.post('/orders/open', requireToken, (req, res, next) => {
             coupon: '',
             completed: false
           }
-        }).then((order) => order.save())
+        })
       } else {
         return orders
       }
     })
     .then((order) => {
-      res.status(200).json({ order: order.toObject() })
+      res.status(200).json({order})
     })
+    .catch(next)
 })
 
 // CREATE
