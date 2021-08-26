@@ -32,28 +32,21 @@ router.get('/orders/:id', requireToken, (req, res, next) => {
 })
 
 // GET users openOrder on sign in OR create one
-router.get('/orders/open', requireToken, (req, res, next) => {
-  Order.find({ owner: req.user._id }) // get all orders i own
-    .then((orders) => {
-      return orders.map((order) => order.toObject()) // make an array of those orders
-    })
-    .then((orders) => {
-      return orders.filter((order) => order.completed === false) // if filter doesn't pass anything it will return empty array
-    })
-    .then((orders) => {
+router.post('/orders/open', requireToken, (req, res, next) => {
+  Order.findOne({ owner: req.user._id, completed: false }) // get all orders i own
+    .then((order) => {
       // if orders = empty array , make a new order! and then send it, if orders = not an empty array we send that one: edge case, multiple open orders ?!?
-      if (!orders.length) {
+      if (order === null) {
         // contents, owner, coupon, completed = a order
         Order.create({
-          order: {
-            contents: [],
-            owner: req.user._id,
-            coupon: '',
-            completed: false
-          }
+          contents: [],
+          owner: req.user._id,
+          coupon: '',
+          completed: false,
         })
+        return order
       } else {
-        return orders
+        return order
       }
     })
     .then((order) => {
