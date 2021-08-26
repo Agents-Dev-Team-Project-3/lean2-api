@@ -8,6 +8,7 @@ const customErrors = require('../../lib/custom_errors')
 const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 const removeBlanks = require('../../lib/remove_blank_fields')
+const order = require('../models/order')
 const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
@@ -43,19 +44,34 @@ router.post('/orders', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-// UPDATE order
+//=============
 router.patch('/orders/:id', requireToken, removeBlanks, (req, res, next) => {
   delete req.body.order.owner
   Order.findById(req.params.id)
     .then(handle404)
-    .then(order => {
+    .then((order) => {
       requireOwnership(req, order)
-
       return order.updateOne(req.body.order)
     })
     .then(() => res.sendStatus(204))
     .catch(next)
 })
+
+// UPDATE order
+// router.patch('/orders/:id', requireToken, removeBlanks, (req, res, next) => {
+//   delete req.body.order.owner
+//   Order.findById(req.params.id)
+//     .then(handle404)
+//     .then((order) => {
+//       requireOwnership(req, order)
+//       return order.updateOne(req.body.order)  
+//     }
+//     )
+//     .then((order) => {
+//       res.status(201).json({ order: order.toObject() })
+//     })
+//     .catch(next)
+// })
 
 // DELETE order
 router.delete('/orders/:id', requireToken, (req, res, next) => {
