@@ -26,10 +26,32 @@ router.get('/orders/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Order.findById(req.params.id)
     .then(handle404)
-    .then((order) => (
-      requireOwnership(req, order)
-    ))
+    .then((order) => (requireOwnership(req, order)))
     .then((order) => res.status(200).json({ order: order.toObject() }))
+    .catch(next)
+})
+
+// GET users openOrder on sign in OR create one
+router.post('/orders/open', requireToken, (req, res, next) => {
+  Order.findOne({ owner: req.user._id, completed: false }) // get all orders i own
+    .then((order) => {
+      // if orders = empty array , make a new order! and then send it, if orders = not an empty array we send that one: edge case, multiple open orders ?!?
+      if (order === null) {
+        // contents, owner, coupon, completed = a order
+        Order.create({
+          contents: [],
+          owner: req.user._id,
+          coupon: '',
+          completed: false,
+        })
+        return order
+      } else {
+        return order
+      }
+    })
+    .then((order) => {
+      res.status(200).json({order})
+    })
     .catch(next)
 })
 
