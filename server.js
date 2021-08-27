@@ -2,6 +2,9 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const stripe = require('stripe')(
+  'sk_test_51JS9CaHSvQN3qMqEqYNHxR5JmRyiacrD7kFrR1hRpScOHSIEWoZblftR6HYA3hewrkwGrANlHY99oh76PrbJhIv700yt13A1Mr'
+)
 
 // require route files
 const productRoutes = require('./app/routes/product_routes')
@@ -24,6 +27,12 @@ const auth = require('./lib/auth')
 const serverDevPort = 4741
 const clientDevPort = 7165
 
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+  return 1400
+}
 // establish database connection
 // use new version of URL parser
 // use createIndex instead of deprecated ensureIndex
@@ -72,4 +81,23 @@ app.listen(port, () => {
 })
 
 // needed for testing
+// This is your real test secret API key.
+
+app.use(express.static('public'))
+app.use(express.json())
+
+// This is all STRIPE stuff
+app.post('/create-payment-intent', async (req, res) => {
+  const { items } = req.body
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: 'usd'
+  })
+
+  res.send({
+    clientSecret: paymentIntent.client_secret
+  })
+})
+
 module.exports = app
