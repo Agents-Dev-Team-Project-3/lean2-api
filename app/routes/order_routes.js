@@ -38,19 +38,19 @@ router.post('/orders/open', requireToken, (req, res, next) => {
       // if orders = empty array , make a new order! and then send it, if orders = not an empty array we send that one: edge case, multiple open orders ?!?
       if (order === null) {
         // contents, owner, coupon, completed = a order
-        Order.create({
+        const newOrder = Order.create({
           contents: [],
           owner: req.user._id,
           coupon: '',
           completed: false,
         })
-        return order
+        return newOrder
       } else {
         return order
       }
     })
     .then((order) => {
-      res.status(200).json({order})
+      res.status(200).json({ order: order.toObject() })
     })
     .catch(next)
 })
