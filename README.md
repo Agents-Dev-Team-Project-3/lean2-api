@@ -27,6 +27,7 @@ Authenticated Routes:
 | GET | /orders/:id | read single user order | show or retrieve |
 | POST | /orders/open | create a new order | create |
 |PATCH| /orders/:id| update a user's order| update|
+|DELETE| /sign-out| sign out user| sign out|
 
 ---
 
